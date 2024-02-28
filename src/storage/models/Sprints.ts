@@ -1,9 +1,8 @@
 import { DataTypes, ModelStatic } from "sequelize";
 import { sequelize } from "..";
 
-export let Sprints: ModelStatic<any> | null = null;
 
-export const DefineSprints = () => Sprints = sequelize.define('Sprints', {
+const sprintConfig = {
   SprintID: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -29,7 +28,13 @@ export const DefineSprints = () => Sprints = sequelize.define('Sprints', {
     type: DataTypes.STRING(16),
     allowNull: false
   }
-}, {
+}
+
+export type Sprint =
+  Record<keyof typeof sprintConfig, any>;
+
+
+const Sprints = sequelize.define('Sprints', sprintConfig, {
   createdAt: false,
   updatedAt: false,
   tableName: 'Sprints',
@@ -45,3 +50,6 @@ export const DefineSprints = () => Sprints = sequelize.define('Sprints', {
     },
   ]
 });
+
+export default Sprints;
+

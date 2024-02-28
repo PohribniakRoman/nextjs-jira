@@ -1,9 +1,7 @@
 import { DataTypes, ModelStatic } from "sequelize";
 import { sequelize } from "..";
 
-export let Tags: ModelStatic<any> | null = null;
-
-export const DefineTags = () => Tags = sequelize.define('Tags', {
+const tagConfig = {
   TagID: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -25,7 +23,13 @@ export const DefineTags = () => Tags = sequelize.define('Tags', {
     type: DataTypes.BOOLEAN,
     allowNull: false
   }
-}, {
+}
+
+
+export type Tag =
+  Record<keyof typeof tagConfig, any>;
+
+const Tags = sequelize.define('Tags', tagConfig, {
   createdAt: false,
   updatedAt: false,
   tableName: 'Tags',
@@ -41,3 +45,5 @@ export const DefineTags = () => Tags = sequelize.define('Tags', {
     },
   ]
 });
+
+export default Tags;

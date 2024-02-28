@@ -1,4 +1,4 @@
-import { DataTypes, ModelStatic } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "..";
 
 const projectsConfig = {
@@ -18,12 +18,16 @@ const projectsConfig = {
   archived: {
     type: DataTypes.BOOLEAN,
     allowNull: false
+  },
+  createdAt: {
+    type: DataTypes.DATE,
+    allowNull: false
   }
 }
 
-export let Projects: ModelStatic<any> | null = null;
+export type Project = Record<keyof typeof projectsConfig, any>;
 
-export const DefineProjects = () => Projects = sequelize.define('Projects', projectsConfig, {
+const Projects = sequelize.define('Projects', projectsConfig, {
   updatedAt: false,
   createdAt: false,
   tableName: 'Projects',
@@ -39,3 +43,5 @@ export const DefineProjects = () => Projects = sequelize.define('Projects', proj
     },
   ]
 });
+
+export default Projects;

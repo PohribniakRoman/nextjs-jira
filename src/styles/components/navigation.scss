@@ -1,0 +1,49 @@
+.navigation {
+  display: flex;
+  width: 100vw;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 10% 20px 60px;
+  user-select: none;
+  &__logo {
+    font-size: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 100;
+    font-style: italic;
+    gap: 6px;
+  }
+  &__item {
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+    position: relative;
+    padding-bottom: 5px;
+    &:hover::before {
+      transform: scaleX(1);
+      transform-origin: left center;
+    }
+    &::before {
+      content: "";
+      transition: transform .6s cubic-bezier(.19,1,.22,1),-webkit-transform .6s cubic-bezier(.19,1,.22,1);
+      left: 0;
+      bottom: 0;
+      position: absolute;
+      width: 100%;
+      min-height: 1px;
+      background-color: #fff;
+      transform-origin: right center;
+      transform: scaleX(0);
+    }
+  }
+  & .active {
+    &::before {
+      transform: scaleX(1);
+    }
+  }
+  &__container {
+    gap: 30px;
+    display: flex;
+  }
+}

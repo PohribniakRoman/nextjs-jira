@@ -1,9 +1,8 @@
 import { DataTypes, ModelStatic } from "sequelize";
 import { sequelize } from "..";
 
-export let SprintsTasks: ModelStatic<any> | null = null;
 
-export const DefineSprintsTasks = () => SprintsTasks = sequelize.define('SprintsTasks', {
+const SprintsTasks = sequelize.define('SprintsTasks', {
   Sprint_TaskID: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -41,3 +40,5 @@ export const DefineSprintsTasks = () => SprintsTasks = sequelize.define('Sprints
     },
   ]
 });
+
+export default SprintsTasks;

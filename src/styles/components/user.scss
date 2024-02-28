@@ -1,0 +1,36 @@
+.user-bage {
+  user-select: none;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  &__avatar {
+    background: linear-gradient(
+      315deg,
+      rgba(1, 65, 255),
+      rgb(128, 0, 128)
+    ) !important;
+  }
+  & section{
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+  &__email{
+    color: rgba($color: #fff, $alpha: 0.5);
+    font-size: 12px;
+  }
+  &__title {
+    font-weight: bold;
+  }
+}
+.teams {
+  &--title{
+    user-select: none;
+    font-size: 32px;
+    font-style: italic;
+  }
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}

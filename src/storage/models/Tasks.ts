@@ -1,9 +1,8 @@
 import { DataTypes, ModelStatic } from "sequelize";
 import { sequelize } from "..";
 
-export let Tasks: ModelStatic<any> | null = null;
 
-export const DefineTasks = () => Tasks = sequelize.define('Tasks', {
+const taskConfig = {
   TaskID: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -33,7 +32,13 @@ export const DefineTasks = () => Tasks = sequelize.define('Tasks', {
     type: DataTypes.STRING(64),
     allowNull: false
   }
-}, {
+}
+
+export type Task =
+  Record<keyof typeof taskConfig, any>;
+
+
+const Tasks = sequelize.define('Tasks', taskConfig, {
   createdAt: false,
   updatedAt: false,
   tableName: 'Tasks',
@@ -49,3 +54,6 @@ export const DefineTasks = () => Tasks = sequelize.define('Tasks', {
     },
   ]
 });
+
+export default Tasks;
+

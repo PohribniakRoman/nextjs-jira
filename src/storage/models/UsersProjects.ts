@@ -3,9 +3,8 @@ import { sequelize } from "..";
 
 
 
-export let UsersProjects: ModelStatic<any> | null = null;
 
-export const DefineUsersProjects = () => UsersProjects = sequelize.define('UsersProjects', {
+const UsersProjects = sequelize.define('UsersProjects', {
   User_ProjectID: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -43,3 +42,5 @@ export const DefineUsersProjects = () => UsersProjects = sequelize.define('Users
     },
   ]
 });
+
+export default UsersProjects;

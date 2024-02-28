@@ -1,9 +1,7 @@
-import { DataTypes, ModelStatic } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "..";
 
-export let UsersTasks: ModelStatic<any> | null = null;
-
-export const DefineUsersTasks = () => UsersTasks = sequelize.define('UsersTasks', {
+const UsersTasks = sequelize.define('UsersTasks', {
   Task_UserID: {
     type: DataTypes.INTEGER,
     allowNull: false,
@@ -41,3 +39,5 @@ export const DefineUsersTasks = () => UsersTasks = sequelize.define('UsersTasks'
     },
   ]
 });
+
+export default UsersTasks;
