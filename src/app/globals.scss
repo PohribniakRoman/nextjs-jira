@@ -126,3 +126,11 @@ button {
   backdrop-filter: blur(10px);
   z-index: 99999;
 }
+.alert {
+  width: 40%;
+  margin: 0 auto;
+  margin-top: 35vh;
+  color: orange !important;
+  display: flex;
+  justify-content: center;
+}

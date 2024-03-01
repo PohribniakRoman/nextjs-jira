@@ -24,7 +24,7 @@ export const Menu = ({ id }: { id: string }) => {
       setProject(data);
     })();
 
-  }, []);
+  }, [id]);
 
   if (!project) {
     return <Loader />;

@@ -1,7 +1,5 @@
-import { DataTypes, ModelStatic } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "..";
-
-
 
 
 const UsersProjects = sequelize.define('UsersProjects', {

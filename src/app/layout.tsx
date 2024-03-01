@@ -4,6 +4,7 @@ import "./globals.scss";
 import "../styles/main.scss";
 import { Navigation } from "@/components/Navigation";
 import { Metadata } from "next";
+import { ReduxProvider } from "@/redux/Provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,10 +21,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AppRouterCacheProvider>
-          <Navigation />
-          {children}
-        </AppRouterCacheProvider>
+        <ReduxProvider>
+          <AppRouterCacheProvider>
+            <Navigation />
+            {children}
+          </AppRouterCacheProvider>
+        </ReduxProvider>
       </body>
     </html>
   );

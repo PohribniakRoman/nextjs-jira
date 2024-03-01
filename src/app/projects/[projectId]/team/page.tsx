@@ -19,7 +19,7 @@ export default function Team() {
       setTeamList(data);
     })();
 
-  }, []);
+  }, [projectId]);
 
   return (
     <div className="teams">

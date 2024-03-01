@@ -1,5 +1,6 @@
 "use client";
-import { CiLock } from "react-icons/ci";
+import { Loader } from "@/components/Loader";
+import { postReq } from "@/components/Menu";
 import Avatar from "@mui/material/Avatar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -7,15 +8,12 @@ import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import * as React from "react";
-import { useRouter } from "next/navigation";
-import { postReq } from "@/components/Menu";
-import { Loader } from "@/components/Loader";
+import { CiLock } from "react-icons/ci";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
 export default function Auth() {
-  const { push } = useRouter();
   const [isLoading, setLoading] = React.useState(false);
   const [isSignIn, setIsSignIn] = React.useState(true);
 
@@ -34,7 +32,8 @@ export default function Auth() {
           cookies.set("token", resp.token as string, {
             maxAge: 604800,
           });
-          push("/");
+          window.history.pushState(null,"","/");
+          location.reload();
         } else {
           alert(resp.msg as string);
         }
