@@ -10,7 +10,7 @@ export const ProjcetComponent = ({ project }: ProjectProps) => {
   return (
     <div className={`project ${project.archived && "inactive"}`}>
       <h3 className="project__title">{project.title}</h3>
-      <p className="project__description">{project.description}</p>
+      <p className="project__description">{project.description.replace(/(?:<(\/?))[\w\s"():,=;-]*(?:>)/gi," ").slice(0,64).trim()+"..."}</p>
       {!project.archived && (
         <Link href={`/projects/${project.ProjectID}`}>
           <div className="project__btn">

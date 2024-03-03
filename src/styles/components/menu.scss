@@ -1,4 +1,7 @@
 .menu {
+  & ul{
+    list-style: none !important;
+  }
   display: flex;
   flex-direction: column;
   width: 15%;

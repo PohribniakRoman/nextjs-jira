@@ -1,4 +1,12 @@
 .profile {
+  * h1, h2, h3, h4, h5, h6{
+    font-size: 100%;
+    font: inherit;
+    vertical-align: baseline;
+  }
+  & ul{
+    list-style: none !important;
+  }
   display: flex;
   align-items: center;
   justify-content: center;

@@ -13,7 +13,7 @@
     max-width: 23%;
     background: linear-gradient(315deg, rgba(1, 65, 255), rgb(128, 0, 128));
     border: none;
-    &:hover svg{
+    &:hover svg {
       transform: unset;
     }
   }
@@ -61,7 +61,7 @@
       z-index: 1000;
     }
     &.new {
-      max-width: 300px; 
+      max-width: 300px;
       cursor: pointer;
       font-size: 18px;
       font-weight: bold;
@@ -87,6 +87,62 @@
   }
 }
 
-.project_wrapper{
+.project_wrapper {
   display: flex;
+}
+
+.modal {
+  width: 100dvw;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  backdrop-filter: blur(10px);
+  height: 100dvh;
+  &__wrapper {
+    outline: none;
+    width: 70%;
+    height: 90%;
+    border-radius: 20px;
+    background-color: rgba(var(--callout-rgb), 1);
+    border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  &__entry {
+    margin-top: 20px !important;
+    width: 80%;
+    & * {
+      color: #fff !important;
+    }
+  }
+
+  &__editor {
+    width: 80%;
+    & * {
+      border-color: rgba(var(--callout-border-rgb), 0.3) !important;
+    }
+  }
+}
+
+.ql-toolbar {
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.ql-container{
+  & *::before{
+    color: #fff !important;
+    opacity: 0.5;
+  }
+  height:fit-content !important;
+  max-height: 300px;
+  overflow-y: scroll;
+  margin-bottom: 20px !important;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  &::-webkit-scrollbar{
+    width: 0;
+  }
 }

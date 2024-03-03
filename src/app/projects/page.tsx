@@ -1,19 +1,62 @@
 "use client";
-import { ProjcetComponent } from "@/components/Project";
-import { FiPlus } from "react-icons/fi";
-import { useEffect, useState } from "react";
-import { Project } from "@/storage/models/Projects";
+import type ReactQuill from 'react-quill';
+import React, { useCallback, useEffect, useState } from "react";
 import { Loader } from "@/components/Loader";
+import { ProjcetComponent } from "@/components/Project";
+import { postReq } from "@/components/Menu";
+import { Project } from "@/storage/models/Projects";
+import { FiPlus } from "react-icons/fi";
+import { RootState } from "@/redux/store";
+import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
+import Modal from "@mui/material/Modal";
+import Button from "@mui/material/Button";
+import "react-quill/dist/quill.snow.css";
+import dynamic from "next/dynamic";
 
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
-import Modal from '@mui/material/Modal';
+const QuillWrapper = dynamic(
+  async () => {
+    const { default: RQ } = await import("react-quill");
+    // eslint-disable-next-line react/display-name
+    return ({ ...props }) => <RQ {...props} />;
+  },
+  {
+    ssr: false,
+  }
+) as typeof ReactQuill;
+
+const modules = {
+  toolbar: [
+    [{ header: "1" }, { header: "2" }, { header: "3" }, { font: [] }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link"],
+    ["clean"],
+  ],
+  clipboard: {
+    // toggle to add extra line breaks when pasting HTML:
+    matchVisual: false,
+  },
+};
 
 export default function Projects() {
   const [open, setOpen] = useState(false);
+  const { push } = useRouter();
   const [projects, setProjects] = useState<Project[] | null>(null);
+  const [description, setDescription] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [title, setTitle] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const { UserID } = useSelector(({ user }: RootState) => user);
 
   useEffect(() => {
     (async () => {
@@ -25,19 +68,67 @@ export default function Projects() {
     })();
   }, []);
 
+  const handleSubmit = useCallback(
+    (e: React.FormEvent) => {
+      e.preventDefault();
+
+      if (description.trim() && title.trim()) {
+        (async () => {
+          setLoading(true);
+          const { success, ProjectID } = await postReq("createProject", {
+            title,
+            description,
+            UserID,
+          });
+          if (success) {
+            push("/projects/" + ProjectID);
+          } else {
+            alert("Something went wrong...");
+          }
+          setLoading(false);
+        })();
+      } else {
+        alert("Fields can't be null!");
+      }
+    },
+    [description, title, push, UserID]
+  );
+
   return (
     <main className="project__wrapper">
-       <Modal
-        open={open}
-        onClose={handleClose}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
+      {loading && <Loader />}
+      <Modal className="modal" open={open} onClose={handleClose}>
+        <form className="modal__wrapper" onSubmit={handleSubmit}>
+          <Typography variant="h4" component="h2">
             Create new project
           </Typography>
-        </Box>
+          <TextField
+            label="Project Name"
+            variant="filled"
+            className="modal__entry"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+          <Typography
+            fontStyle={"italic"}
+            width={"80%"}
+            padding={"20px"}
+            component="h2"
+          >
+            Project description
+          </Typography>
+          <QuillWrapper
+            modules={modules}
+            className="modal__editor"
+            placeholder="Your description here..."
+            theme="snow"
+            value={description}
+            onChange={setDescription}
+          />
+          <Button variant="outlined" type="submit">
+            Create
+          </Button>
+        </form>
       </Modal>
       <div className="project new">
         <h3 className="project__title">Add new</h3>

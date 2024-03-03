@@ -2,7 +2,7 @@
 import { RootState } from "@/redux/store";
 import Avatar from "@mui/material/Avatar";
 import Link from "next/link";
-import { redirect, usePathname } from "next/navigation";
+import { redirect, usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { SiJira } from "react-icons/si";
 import { useDispatch, useSelector } from "react-redux";
@@ -32,6 +32,7 @@ export function intToRGB(i: number) {
 }
 
 export const Navigation = () => {
+  const { push } = useRouter();
   const path = usePathname();
   const dispatch = useDispatch();
   const user = useSelector((state: RootState) => state.user);
@@ -44,7 +45,7 @@ export const Navigation = () => {
       if (success) {
         cookies.set("token", token as string, {
           maxAge: 604800,
-          path:'/'
+          path: "/",
         });
         dispatch({ type: "LOAD_USER", payload: user });
       }
@@ -52,12 +53,11 @@ export const Navigation = () => {
     })();
   }, [dispatch]);
 
-  const handleLogOut = useCallback(()=>{
-    cookies.remove("token",{path:"/"});
-    window.history.pushState(null,"","/auth");
-    location.reload();
-  },[])
-  
+  const handleLogOut = useCallback(() => {
+    cookies.remove("token", { path: "/" });
+    push("/auth");
+  }, [push]);
+
   if (path === "/auth") {
     return <></>;
   }
@@ -73,10 +73,12 @@ export const Navigation = () => {
   const fullName = capitalize(user.name) + " " + capitalize(user.surname);
   return (
     <nav className="navigation">
-      <nav className="navigation__logo">
-        <SiJira fill="rgb(61, 109, 252)" size={"24px"} />
-        Jria
-      </nav>
+      <Link href={"/"}>
+        <nav className="navigation__logo">
+          <SiJira fill="rgb(61, 109, 252)" size={"24px"} />
+          Jria
+        </nav>
+      </Link>
       <nav className="navigation__container">
         {NavigationList.map((link) => (
           <Link href={link} key={link}>

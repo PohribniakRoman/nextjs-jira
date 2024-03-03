@@ -7,6 +7,7 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { useRouter } from "next/navigation";
 import * as React from "react";
 import { CiLock } from "react-icons/ci";
 import Cookies from "universal-cookie";
@@ -14,6 +15,7 @@ import Cookies from "universal-cookie";
 const cookies = new Cookies();
 
 export default function Auth() {
+  const { push } = useRouter();
   const [isLoading, setLoading] = React.useState(false);
   const [isSignIn, setIsSignIn] = React.useState(true);
 
@@ -25,6 +27,14 @@ export default function Auth() {
       password: (data.get("password") as string).trim(),
     };
     if (values.name && values.password) {
+      // TODO:I'm lazy(remove 2nd if case)
+      if (
+        !values.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/) &&
+        values.name !== "Roman Pohribniak"
+      ) {
+        alert("Password didn't match requirements");
+        return;
+      }
       setLoading(true);
       (async () => {
         const resp = await postReq("auth", { isSignIn, ...values });
@@ -32,8 +42,9 @@ export default function Auth() {
           cookies.set("token", resp.token as string, {
             maxAge: 604800,
           });
-          window.history.pushState(null,"","/");
-          location.reload();
+          setTimeout(() => {
+            push("/");
+          }, 100);
         } else {
           alert(resp.msg as string);
         }
@@ -49,11 +60,11 @@ export default function Auth() {
       <Container maxWidth="xs">
         <Box
           sx={{
-            height:"90vh",
+            height: "90vh",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
-            justifyContent:"center",
+            justifyContent: "center",
           }}
         >
           <Avatar className="user-bage__avatar" sizes="lg">
@@ -90,6 +101,10 @@ export default function Auth() {
               id="password"
               autoComplete="current-password"
             />
+            <p className="password_tip">
+              Password must contain at least eight characters,one letter and one
+              number
+            </p>
             <Button
               type="submit"
               fullWidth
