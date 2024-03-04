@@ -42,7 +42,6 @@ const modules = {
     ["clean"],
   ],
   clipboard: {
-    // toggle to add extra line breaks when pasting HTML:
     matchVisual: false,
   },
 };
@@ -63,7 +62,6 @@ export default function Projects() {
       const { data } = await (
         await fetch("http://localhost:3000/api/getProjects")
       ).json();
-      data.length = 7;
       setProjects(data);
     })();
   }, []);

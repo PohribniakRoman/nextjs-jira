@@ -85,6 +85,43 @@
       background: linear-gradient(315deg, rgba(1, 65, 255), rgb(128, 0, 128));
     }
   }
+  &__home {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90%;
+    &--wrapper {
+      width: 70%;
+      margin: 20px auto;
+      min-width: 300px;
+      min-height: 50vh;
+      padding: 20px;
+      border-radius: 20px;
+      background-color: rgba(var(--callout-rgb), 0.5);
+      border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+    }
+    &--separator {
+      display: block;
+      width: 45%;
+      margin: 10px auto;
+      height: 2px;
+      border-radius: 20px;
+      background-color: #fff;
+    }
+    &--header {
+      text-align: center;
+      text-transform: capitalize;
+      color: rgb(153, 178, 255);
+    }
+    &--admin {
+      & h1 {
+        font-style: italic;
+        opacity: 0.6;
+      }
+      gap: 20px;
+      display: flex;
+    }
+  }
 }
 
 .project_wrapper {
@@ -126,23 +163,69 @@
     }
   }
 }
+.modal__add-user {
+  outline: none;
+  width: 50%;
+  min-height: 100px;
+  border-radius: 20px;
+  background-color: rgba(var(--callout-rgb), 1);
+  border: 1px solid rgba(var(--callout-border-rgb), 0.3);
+  padding: 20px;
+  & h1 {
+    text-align: center;
+    font-style: italic;
+    opacity: 0.6;
+  }
+  &--user {
+    width: 80%;
+    height: 45px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    & p {
+      font-size: 12px;
+      opacity: 0.5;
+    }
+  }
+  &--result {
+    margin: 20px 0;
+    width: 100%;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+  }
+  &--entry {
+    margin-top: 20px !important;
+    width: 80%;
+    margin-left: 10% !important;
+    & * {
+      color: #fff !important;
+    }
+  }
+}
 
 .ql-toolbar {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
-.ql-container{
-  & *::before{
+.ql-container {
+  & *::before {
     color: #fff !important;
     opacity: 0.5;
   }
-  height:fit-content !important;
+  height: fit-content !important;
   max-height: 300px;
   overflow-y: scroll;
   margin-bottom: 20px !important;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
-  &::-webkit-scrollbar{
+  &::-webkit-scrollbar {
     width: 0;
   }
+}
+.rte {
+  font-weight: 300;
+  padding: 20px;
 }

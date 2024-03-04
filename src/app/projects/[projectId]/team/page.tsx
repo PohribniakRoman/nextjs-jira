@@ -9,7 +9,7 @@ import { useEffect, useState } from "react";
 export default function Team() {
   const { projectId } = useParams();
 
-  const [teamList, setTeamList] = useState<null | User[]>(null);
+  const [teamList, setTeamList] = useState<null | (User & {isAdmin:boolean,isOwner:boolean})[]>(null);
   useEffect(() => {
 
     (async () => {

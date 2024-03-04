@@ -6,11 +6,12 @@ const intitialState = {
     surname: "",
     email: "",
     UserID: -1,
-} as User;
+    requestCount:0
+} as User & {requestCount:number};
 
 export type UserAction = {
     type: "LOAD_USER",
-    payload: User,
+    payload: User & {requestCount:number},
 }
 
 export const userReducer = (state = intitialState, action: UserAction) => {

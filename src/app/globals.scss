@@ -109,12 +109,14 @@ a {
 }
 * {
   user-select: none;
+  font-weight: 300;
 }
 
 button {
   color: #fff !important;
   text-transform: capitalize !important;
 }
+
 .signup_signin {
   color: #2195f3;
   font-size: 12px !important;
@@ -138,7 +140,4 @@ button {
   font-size: 12px;
   opacity: 0.6;
   font-weight: 300;
-}
-.rte {
-  padding: 20px;
 }

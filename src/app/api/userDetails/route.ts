@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
     const user = (await Users.findOne({ where: { name: firstName, surname: lastName } }))?.dataValues as User | null;
     if (user) {
         const projects = await getUserProjectsByID(user.UserID);
-        return NextResponse.json({ user, projects, msg: "User data" });
+        return NextResponse.json({ user,projects, msg: "User data" });
     }
     return NextResponse.json({ msg: "No user with such name" })
 }

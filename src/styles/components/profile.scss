@@ -1,16 +1,36 @@
 .profile {
-  * h1, h2, h3, h4, h5, h6{
+  * h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-size: 100%;
     font: inherit;
     vertical-align: baseline;
   }
-  & ul{
+  & ul {
     list-style: none !important;
   }
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  &__requests {
+    width: 40%;
+    padding: 30px;
+    & h1 {
+      font-size: 24px;
+      opacity: 0.6;
+      font-style: italic;
+    }
+    &--item {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
   &__avatar {
     width: 70px !important;
     height: 70px !important;
@@ -37,15 +57,15 @@
       justify-content: space-between;
       align-items: center;
     }
-    & * li h1{
+    & * li h1 {
       font-size: 12px;
     }
-    & * li h3{
+    & * li h3 {
       font-size: 14px;
       opacity: 0.5;
     }
 
-    & * li b{
+    & * li b {
       font-size: 16px;
       opacity: 0.5;
     }
@@ -53,4 +73,11 @@
       border-top: 1px solid rgba(var(--callout-border-rgb), 0.3);
     }
   }
+}
+
+.profile__requests--loader {
+ padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

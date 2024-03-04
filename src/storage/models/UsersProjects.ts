@@ -6,6 +6,7 @@ const UsersProjects = sequelize.define('UsersProjects', {
   User_ProjectID: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    autoIncrement:true,
     primaryKey: true
   },
   UserID: {

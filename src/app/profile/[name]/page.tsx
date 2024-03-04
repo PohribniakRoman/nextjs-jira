@@ -3,6 +3,7 @@
 import Alert from "@mui/material/Alert";
 import Avatar from "@mui/material/Avatar";
 
+import CircularProgress from "@mui/material/CircularProgress";
 import { Loader } from "@/components/Loader";
 import { postReq } from "@/components/Menu";
 import { hashCode, intToRGB } from "@/components/Navigation";
@@ -10,20 +11,63 @@ import { Project } from "@/storage/models/Projects";
 import { User } from "@/storage/models/Users";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import moment from "moment";
+import { useSelector } from "react-redux";
+import { RootState } from "@/redux/store";
+import Button from "@mui/material/Button";
+import ButtonGroup from "@mui/material/ButtonGroup";
+import { CgCheck } from "react-icons/cg";
+import { RxCross1 } from "react-icons/rx";
 
 export default function Me() {
   const { name } = useParams();
+  const {
+    name: userName,
+    UserID,
+    surname,
+  } = useSelector(({ user }: RootState) => user);
+  const [userRequests, setUserRequests] = useState<any[] | null>(null);
   const [userDetails, setUserDetails] = useState<
-    { user?: User; msg: string; projects?: Project[] } | undefined
+    | {
+        user?: User;
+        msg: string;
+        projects?: Project[];
+        requests: { title: string; ProjectID: string }[];
+      }
+    | undefined
   >();
+
+  const fullName = userDetails?.user?.name + " " + userDetails?.user?.surname;
+
+  const handleRequest = useCallback(
+    (ProjectID: string, isAccepted: boolean) => {
+      postReq("resolveRequests", { ProjectID, isAccepted, UserID });
+      location.reload();
+    },
+    [UserID]
+  );
+
   useEffect(() => {
+    if (UserID < 0 || !name) {
+      return;
+    }
     (async () => {
       const userData = await postReq("userDetails", { name });
+      if (
+        (name as string).toLowerCase().trim() ===
+        (userName + "_" + surname).toLowerCase().trim()
+      ) {
+        const { requests } = await postReq("userRequest", { UserID });
+        console.log(requests);
+
+        setUserRequests(requests);
+      } else {
+        setUserRequests(["null"]);
+      }
       setUserDetails(userData);
     })();
-  }, [name]);
+  }, [name, UserID, userName, surname]);
 
   if (!userDetails) {
     return <Loader />;
@@ -36,8 +80,6 @@ export default function Me() {
       </Alert>
     );
   }
-
-  const fullName = userDetails.user?.name + " " + userDetails.user?.surname;
 
   return (
     <div className="profile">
@@ -53,6 +95,36 @@ export default function Me() {
       <h1 className="profile__title">{fullName}</h1>
       {userDetails.user?.email !== "NULL" && (
         <h3 className="profile__email">{userDetails.user?.email}</h3>
+      )}
+      {userRequests ? (
+        (userRequests[0] !== "null" && userRequests.length >= 1) && (
+          <ul className="profile__requests">
+            <h1>Offers:</h1>
+            {userRequests.map((request) => (
+              <li key={request.ProjectID} className="profile__requests--item">
+                <h3>{request.title}</h3>
+                <ButtonGroup variant="outlined" aria-label="Basic button group">
+                  <Button
+                    color="success"
+                    onClick={() => handleRequest(request.ProjectID, true)}
+                  >
+                    <CgCheck />
+                  </Button>
+                  <Button
+                    color="error"
+                    onClick={() => handleRequest(request.ProjectID, false)}
+                  >
+                    <RxCross1 />
+                  </Button>
+                </ButtonGroup>
+              </li>
+            ))}
+          </ul>
+        )
+      ) : (
+        <div className="profile__requests--loader">
+          <CircularProgress color={"info"} size={"42px"} />
+        </div>
       )}
       {userDetails.projects?.length ? (
         <ul className="profile__project">

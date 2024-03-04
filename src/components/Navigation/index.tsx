@@ -2,6 +2,7 @@
 import { RootState } from "@/redux/store";
 import Avatar from "@mui/material/Avatar";
 import Link from "next/link";
+import Badge from "@mui/material/Badge";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { SiJira } from "react-icons/si";
@@ -13,7 +14,7 @@ import { postReq } from "../Menu";
 
 const cookies = new Cookies();
 
-export const capitalize = (str: string) => str[0].toUpperCase() + str.slice(1);
+export const capitalize = (str: string) => (str[0] || "").toUpperCase() + str.slice(1);
 
 const NavigationList = ["/", "/projects", "/tasks"];
 
@@ -26,7 +27,7 @@ export function hashCode(str: string) {
 }
 
 export function intToRGB(i: number) {
-  const c = (i & 0x00ffffff).toString(16).toUpperCase();
+  const c = (i & 0x00ffffff).toString(16)?.toUpperCase();
 
   return "#" + "00000".substring(0, 6 - c.length) + c;
 }
@@ -41,13 +42,15 @@ export const Navigation = () => {
   useEffect(() => {
     (async () => {
       const token = cookies.get("token");
-      const { success, user } = await postReq("checkAuth", { token });
+      const { success, user, requestCount } = await postReq("checkAuth", {
+        token,
+      });
       if (success) {
-        cookies.set("token", token as string, {
+        (path === "/auth" || path === "/") && cookies.set("token", token as string, {
           maxAge: 604800,
           path: "/",
         });
-        dispatch({ type: "LOAD_USER", payload: user });
+        dispatch({ type: "LOAD_USER", payload: { ...user, requestCount } });
       }
       setAuthenticated(success);
     })();
@@ -88,18 +91,20 @@ export const Navigation = () => {
           </Link>
         ))}
         <Link href={`/profile/${fullName.replace(" ", "_")}`}>
-          <nav className="navigation__user">
-            <Avatar
-              sx={{
-                background: intToRGB(hashCode(fullName.toLowerCase())),
-                fontSize: "16px",
-              }}
-            >
-              {user.name[0]}
-              {user.surname[0]}
-            </Avatar>
-            {fullName}
-          </nav>
+          <Badge badgeContent={user.requestCount} color="primary">
+            <nav className="navigation__user">
+              <Avatar
+                sx={{
+                  background: intToRGB(hashCode(fullName.toLowerCase())),
+                  fontSize: "16px",
+                }}
+              >
+                {user.name[0]}
+                {user.surname[0]}
+              </Avatar>
+              {fullName}
+            </nav>
+          </Badge>
         </Link>
         <nav className="navigation__logout" onClick={handleLogOut}>
           <TbDoorExit />

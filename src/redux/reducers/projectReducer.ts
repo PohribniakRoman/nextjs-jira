@@ -5,11 +5,12 @@ const intitialState = {
     title: "",
     description: "",
     archived:false,
-} as Project;
+    isAdmin:false,
+} as Project & {isAdmin:boolean,isOwner:boolean};
 
 export type UserAction = {
     type: "LOAD_PROJECT",
-    payload: Project,
+    payload: Project & {isAdmin:boolean,isOwner:boolean},
 }
 
 export const projectReducer = (state = intitialState, action: UserAction) => {
