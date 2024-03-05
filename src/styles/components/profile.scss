@@ -46,37 +46,16 @@
     padding-top: 16px;
   }
   &__project {
-    margin-top: 40px;
-    width: 60%;
-    border-radius: 20px;
-    background-color: rgba(var(--callout-rgb), 0.5);
-    border: 1px solid rgba(var(--callout-border-rgb), 0.3);
-    &--item {
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    & * li h1 {
-      font-size: 12px;
-    }
-    & * li h3 {
-      font-size: 14px;
-      opacity: 0.5;
-    }
-
-    & * li b {
-      font-size: 16px;
-      opacity: 0.5;
-    }
-    & * li:first-child {
-      border-top: 1px solid rgba(var(--callout-border-rgb), 0.3);
-    }
+    width: 70%;
+    padding: 25px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
   }
 }
 
 .profile__requests--loader {
- padding: 20px;
+  padding: 20px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -19,6 +19,7 @@ import Button from "@mui/material/Button";
 import ButtonGroup from "@mui/material/ButtonGroup";
 import { CgCheck } from "react-icons/cg";
 import { RxCross1 } from "react-icons/rx";
+import { ProjcetComponent } from "@/components/Project";
 
 export default function Me() {
   const { name } = useParams();
@@ -97,7 +98,8 @@ export default function Me() {
         <h3 className="profile__email">{userDetails.user?.email}</h3>
       )}
       {userRequests ? (
-        (userRequests[0] !== "null" && userRequests.length >= 1) && (
+        userRequests[0] !== "null" &&
+        userRequests.length >= 1 && (
           <ul className="profile__requests">
             <h1>Offers:</h1>
             {userRequests.map((request) => (
@@ -128,28 +130,8 @@ export default function Me() {
       )}
       {userDetails.projects?.length ? (
         <ul className="profile__project">
-          <li className="profile__project--item">
-            <i>ID</i>
-            <h1>Project Name</h1>
-            <h3>Active</h3>
-            <b>Creatin Date</b>
-          </li>
           {userDetails.projects?.map((project) => (
-            <Link
-              key={project.ProjectID}
-              href={`/projects/${project.ProjectID}`}
-            >
-              <li className="profile__project--item">
-                <i>{project.ProjectID}</i>
-                <h1>{project.title}</h1>
-                <h3>{project.archived ? "Inactive" : "Active"}</h3>
-                <b>
-                  {moment(new Date(project.createdAt).getTime()).format(
-                    "YYYY/MM/D"
-                  )}
-                </b>
-              </li>
-            </Link>
+            <ProjcetComponent project={project} key={project.ProjectID} />
           ))}
         </ul>
       ) : (

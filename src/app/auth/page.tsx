@@ -7,17 +7,17 @@ import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useRouter } from "next/navigation";
 import * as React from "react";
 import { CiLock } from "react-icons/ci";
+import { useDispatch } from "react-redux";
 import Cookies from "universal-cookie";
 
 const cookies = new Cookies();
 
 export default function Auth() {
-  const { push } = useRouter();
   const [isLoading, setLoading] = React.useState(false);
   const [isSignIn, setIsSignIn] = React.useState(true);
+  const dispatch = useDispatch();
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -27,12 +27,18 @@ export default function Auth() {
       password: (data.get("password") as string).trim(),
     };
     if (values.name && values.password) {
-      // TODO:I'm lazy(remove 2nd if case)
       if (
         !values.password.match(/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/) &&
         values.name !== "Roman Pohribniak"
       ) {
-        alert("Password didn't match requirements");
+        dispatch({
+          type: "NEW_NOTIFICATION",
+          payload: {
+            message: "Password didn't match requirements",
+            variant: "warning",
+          },
+        });
+
         return;
       }
       setLoading(true);
@@ -42,16 +48,24 @@ export default function Auth() {
           cookies.set("token", resp.token as string, {
             maxAge: 604800,
           });
-          setTimeout(() => {
-            push("/");
-          }, 100);
+          window.history.pushState(null,"","/");
+          location.reload();
         } else {
-          alert(resp.msg as string);
+          dispatch({
+            type: "NEW_NOTIFICATION",
+            payload: {
+              message: resp.msg,
+              variant: "warning",
+            },
+          });
         }
         setLoading(false);
       })();
     } else {
-      alert("Values sholdn't be null");
+      dispatch({
+        type: "NEW_NOTIFICATION",
+        payload: { message: "Values sholdn't be null", variant: "warning" },
+      });
     }
   };
   return (

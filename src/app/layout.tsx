@@ -5,6 +5,7 @@ import "../styles/main.scss";
 import { Navigation } from "@/components/Navigation";
 import { Metadata } from "next";
 import { ReduxProvider } from "@/redux/Provider";
+import {NotificationContainer} from "@/components/NotificationContainer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,6 +26,7 @@ export default function RootLayout({
           <AppRouterCacheProvider>
             <Navigation />
             {children}
+            <NotificationContainer />
           </AppRouterCacheProvider>
         </ReduxProvider>
       </body>
