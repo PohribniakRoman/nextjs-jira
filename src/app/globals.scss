@@ -136,8 +136,38 @@ button {
   display: flex;
   justify-content: center;
 }
-.password_tip{
+.password_tip {
   font-size: 12px;
   opacity: 0.6;
   font-weight: 300;
+}
+.date {
+  margin: 35px 0 !important;
+  & * {
+    color: #fff !important;
+  }
+}
+.MuiDateCalendar-root * {
+  color: #000 !important; 
+}
+.MuiInputBase-root{
+  & *{
+    border-color: #2195f396 !important;
+  }
+}
+.Mui-disabled.MuiPickersDay-root{
+  color: lightgray !important;
+}
+.h80{
+  width: 80%;
+  padding: 60px 0;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  height: 80vh;
+  max-height: 80vh;
+  overflow-y: scroll;
+  &::-webkit-scrollbar{
+    width: 0;
+  }
 }

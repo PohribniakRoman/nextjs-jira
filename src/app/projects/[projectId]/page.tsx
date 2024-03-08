@@ -1,15 +1,15 @@
 "use client";
-import { RootState } from "@/redux/store";
-import Modal from "@mui/material/Modal";
-import { useSelector } from "react-redux";
-import Button from "@mui/material/Button";
-import { useCallback, useState } from "react";
 import { Loader } from "@/components/Loader";
-import TextField from "@mui/material/TextField";
 import { postReq } from "@/components/Menu";
-import { useDebounceWithCallback } from "@/hooks/useDebounceWithCallback";
-import { User } from "@/storage/models/Users";
 import { SearchResult } from "@/components/SearchResult";
+import { useDebounceWithCallback } from "@/hooks/useDebounceWithCallback";
+import { RootState } from "@/redux/store";
+import { User } from "@/storage/models/Users";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import TextField from "@mui/material/TextField";
+import { useCallback, useState } from "react";
+import { useSelector } from "react-redux";
 
 export default function ProjectPage() {
   const [open, setOpen] = useState(false);

@@ -5,23 +5,16 @@ const UsersTasks = sequelize.define('UsersTasks', {
   Task_UserID: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    autoIncrement:true,
     primaryKey: true
   },
   UserID: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'Users',
-      key: 'UserID'
-    }
   },
   TaskID: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    references: {
-      model: 'Tasks',
-      key: 'TaskID'
-    }
   }
 }, {
   createdAt: false,
@@ -29,15 +22,6 @@ const UsersTasks = sequelize.define('UsersTasks', {
   tableName: 'UsersTasks',
   schema: 'dbo',
   timestamps: false,
-  indexes: [
-    {
-      name: "PK_User_Tasks",
-      unique: true,
-      fields: [
-        { name: "Task_UserID" },
-      ]
-    },
-  ]
 });
 
 export default UsersTasks;

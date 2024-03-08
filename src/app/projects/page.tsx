@@ -8,7 +8,7 @@ import { Project } from "@/storage/models/Projects";
 import { FiPlus } from "react-icons/fi";
 import { RootState } from "@/redux/store";
 import { useRouter } from "next/navigation";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -27,7 +27,7 @@ const QuillWrapper = dynamic(
   }
 ) as typeof ReactQuill;
 
-const modules = {
+export const modules = {
   toolbar: [
     [{ header: "1" }, { header: "2" }, { header: "3" }, { font: [] }],
     [{ size: [] }],
@@ -56,6 +56,7 @@ export default function Projects() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
   const { UserID } = useSelector(({ user }: RootState) => user);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     (async () => {
@@ -81,12 +82,24 @@ export default function Projects() {
           if (success) {
             push("/projects/" + ProjectID);
           } else {
-            alert("Something went wrong...");
+            dispatch({
+              type: "NEW_NOTIFICATION",
+              payload: {
+                message: "Something went wrong...",
+                variant: "error",
+              },
+            })
           }
           setLoading(false);
         })();
       } else {
-        alert("Fields can't be null!");
+        dispatch({
+          type: "NEW_NOTIFICATION",
+          payload: {
+            message: "Fields can't be null!",
+            variant: "warning",
+          },
+        })
       }
     },
     [description, title, push, UserID]

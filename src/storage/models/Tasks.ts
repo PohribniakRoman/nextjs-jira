@@ -6,18 +6,15 @@ const taskConfig = {
   TaskID: {
     type: DataTypes.INTEGER,
     allowNull: false,
-    primaryKey: true
+    autoIncrement: true,
+    primaryKey: true,
   },
-  TagID: {
-    type: DataTypes.INTEGER,
+  priority: {
+    type: DataTypes.TEXT,
     allowNull: false,
-    references: {
-      model: 'Tags',
-      key: 'TagID'
-    }
   },
   estimate: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.BIGINT,
     allowNull: false
   },
   title: {
@@ -31,6 +28,14 @@ const taskConfig = {
   status: {
     type: DataTypes.STRING(64),
     allowNull: false
+  },
+  AssigneeID:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
+  },
+  CreatorID:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
   }
 }
 
@@ -44,15 +49,6 @@ const Tasks = sequelize.define('Tasks', taskConfig, {
   tableName: 'Tasks',
   schema: 'dbo',
   timestamps: true,
-  indexes: [
-    {
-      name: "PK_Tasks",
-      unique: true,
-      fields: [
-        { name: "TaskID" },
-      ]
-    },
-  ]
 });
 
 export default Tasks;
