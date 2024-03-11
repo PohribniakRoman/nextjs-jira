@@ -27,7 +27,7 @@ const QuillWrapper = dynamic(
   }
 ) as typeof ReactQuill;
 
-export const modules = {
+const modules = {
   toolbar: [
     [{ header: "1" }, { header: "2" }, { header: "3" }, { font: [] }],
     [{ size: [] }],
@@ -102,7 +102,7 @@ export default function Projects() {
         })
       }
     },
-    [description, title, push, UserID]
+    [description,dispatch, title, push, UserID]
   );
 
   return (

@@ -36,6 +36,10 @@ const taskConfig = {
   CreatorID:{
     type: DataTypes.INTEGER,
     allowNull: false,
+  },
+  ProjectID:{
+    type: DataTypes.INTEGER,
+    allowNull: false,
   }
 }
 

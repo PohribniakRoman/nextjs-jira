@@ -18,7 +18,7 @@ export const FindUserResult = ({
     ) : searchResult ? (
       searchResult.length ? (
         searchResult.map((user:any) => (
-          <div className="modal__add-user--user">
+          <div className="modal__add-user--user" key={user.UserID}>
             <Link
               target="_blank"
               href={`/profile/${user.name}_${user.surname}`}

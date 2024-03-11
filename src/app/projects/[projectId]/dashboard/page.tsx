@@ -5,6 +5,7 @@ import { postReq } from "@/components/Menu";
 import { useDebounceWithCallback } from "@/hooks/useDebounceWithCallback";
 import { RootState } from "@/redux/store";
 import { User } from "@/storage/models/Users";
+import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import MenuItem from "@mui/material/MenuItem";
@@ -17,10 +18,33 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs, { Dayjs } from "dayjs";
 import dynamic from "next/dynamic";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import { useSelector } from "react-redux";
-import { modules } from "../../page";
+import { Task } from "@/storage/models/Tasks";
+import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
+import { MdKeyboardDoubleArrowUp } from "react-icons/md";
+import moment from "moment";
+import { hashCode, intToRGB } from "@/components/Navigation";
+
+const modules = {
+  toolbar: [
+    [{ header: "1" }, { header: "2" }, { header: "3" }, { font: [] }],
+    [{ size: [] }],
+    ["bold", "italic", "underline", "strike", "blockquote"],
+    [
+      { list: "ordered" },
+      { list: "bullet" },
+      { indent: "-1" },
+      { indent: "+1" },
+    ],
+    ["link"],
+    ["clean"],
+  ],
+  clipboard: {
+    matchVisual: false,
+  },
+};
 
 const QuillWrapper = dynamic(
   async () => {
@@ -33,10 +57,19 @@ const QuillWrapper = dynamic(
   }
 ) as typeof ReactQuill;
 
+const statusArr = ["To Do", "In Progress", "Testing", "Done"];
+
 export default function Dashboard() {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [open1, setOpen1] = useState(false);
+  const handleOpen1 = (task: Task) => {
+    setOpen1(true);
+    setOpenedTask(task);
+  };
+  const handleClose1 = () => setOpen1(false);
+  const [tasks, setTasts] = useState<Task[]>([]);
   const [selectedUser, setSelectedUser] = useState<[string, string] | null>(
     null
   );
@@ -51,7 +84,9 @@ export default function Dashboard() {
     user,
   }));
 
+  const [openedTask, setOpenedTask] = useState<Task | null>(null);
   const [priority, setPriority] = useState("No");
+  const [isEditing, setEditing] = useState(false);
 
   const handleChange = (event: SelectChangeEvent) => {
     setPriority(event.target.value as string);
@@ -68,21 +103,39 @@ export default function Dashboard() {
       setSearchLoading(false);
     }
   });
-  
+
+  const [{ assignee, creator }, setACdata] = useState<{
+    assignee: User | null;
+    creator: User | null;
+  }>({ assignee: null, creator: null });
+
+  useEffect(() => {
+    if (openedTask?.AssigneeID) {
+      (async () => {
+        const data = await postReq("getUserData", {
+          AssigneeID: openedTask.AssigneeID,
+          CreatorID: openedTask.CreatorID,
+        });
+        setACdata(data);
+      })();
+    }
+  }, [openedTask?.TaskID]);
 
   const addTask = async () => {
     if (selectedUser) {
       setLoading(true);
-      const resp = await postReq("addTask", {
+      const { tasks } = await postReq("addTask", {
         CreatorID: user.UserID,
         AssigneeID: selectedUser[0],
         title,
         description,
+        ProjectID: project.ProjectID,
         priority,
-        estimate:date?.toDate().getTime(),
+        estimate: date?.toDate().getTime(),
       });
-      console.log(resp);
       setLoading(false);
+      setTasts(tasks);
+      setOpen(false);
     }
   };
 
@@ -90,17 +143,24 @@ export default function Dashboard() {
     (isSearchLoading ? 80 : searchResult ? searchResult.length * 45 : 20) +
     "px";
 
+  const fetchData = () => {
+    if (project.ProjectID) {
+      (async () => {
+        const { tasks } = await postReq("getTasks", {
+          ProjectID: project.ProjectID,
+        });
+        setTasts(tasks);
+      })();
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [project]);
+
   return (
     <>
       {isLoading && <Loader />}
-      <Button
-        sx={{ color: "#2e7d32 !important;" }}
-        variant="outlined"
-        color="success"
-        onClick={handleOpen}
-      >
-        Add Task +
-      </Button>
       <Modal className="modal" open={open} onClose={handleClose}>
         <div className="modal__add-user h80">
           <h1 style={{ marginBottom: "30px" }}>Add task to the project</h1>
@@ -129,7 +189,7 @@ export default function Dashboard() {
                 <Select value={priority} onChange={handleChange}>
                   <MenuItem value={"No"}>No</MenuItem>
                   <MenuItem value={"Low"}>low</MenuItem>
-                  <MenuItem value={"Medium"}>Meduim</MenuItem>
+                  <MenuItem value={"Medium"}>Medium </MenuItem>
                   <MenuItem value={"High"}> High</MenuItem>
                 </Select>
               </FormControl>
@@ -160,6 +220,188 @@ export default function Dashboard() {
           <Button variant="outlined" color="success" onClick={addTask}>
             Create
           </Button>
+        </div>
+      </Modal>
+      <div className="dashboard">
+        <Button
+          sx={{ color: "#2e7d32 !important;" }}
+          variant="outlined"
+          color="success"
+          onClick={handleOpen}
+        >
+          Add Task +
+        </Button>
+        <div className="dashboard__wrapper">
+          {statusArr.map((status) => {
+            return (
+              <ul
+                key={status}
+                className="dashboard__tab"
+                onDragOver={(e)=>e.preventDefault()}
+                onDrop={async (e) => {
+                  const {success} = await postReq("updateTaskStatus",{TaskID:e.dataTransfer.getData("Text"),status});
+                  if(success){
+                    fetchData();
+                  }
+                }}
+              >
+                <h1>{status}</h1>
+                {tasks.map(
+                  (task) =>
+                    task.status.toLowerCase() === status.toLowerCase() && (
+                      <li
+                        key={task.TaskID}
+                        className="dashboard__tab--item"
+                        onClick={() => handleOpen1(task)}
+                        onDragStart={(e)=>{
+                          e.dataTransfer.setData("Text", task.TaskID);
+                        }}
+                        draggable={true}
+                      >
+                        <h3>{task.title}</h3>
+                        <div className="dashboard__tab--item-bage">
+                          {task.priority === "Low" && (
+                            <MdKeyboardArrowDown fill="orange" />
+                          )}
+                          {task.priority === "Medium" && (
+                            <MdKeyboardArrowUp fill="lightgreen" />
+                          )}
+                          {task.priority === "High" && (
+                            <MdKeyboardDoubleArrowUp fill="blue" />
+                          )}
+                        </div>
+                        <p>
+                          {task.description
+                            .replace(/(?:<(\/?))[\w\s"():,=;-]*(?:>)/gi, " ")
+                            .slice(0, 32)
+                            .trim() + "..."}
+                        </p>
+                        <i>Estimate {moment(+task.estimate).fromNow()}</i>
+                      </li>
+                    )
+                )}
+              </ul>
+            );
+          })}
+        </div>
+      </div>
+      <Modal className="modal" open={open1} onClose={handleClose1}>
+        <div className="modal__project">
+          <h1>{openedTask?.title}</h1>
+          <div
+            className="dashboard__tab--item-bage"
+            style={{ top: "50px", right: "20px" }}
+          >
+            Priority {openedTask?.priority}
+            {openedTask?.priority === "Low" && (
+              <MdKeyboardArrowDown fill="orange" />
+            )}
+            {openedTask?.priority === "Medium" && (
+              <MdKeyboardArrowUp fill="lightgreen" />
+            )}
+            {openedTask?.priority === "High" && (
+              <MdKeyboardDoubleArrowUp fill="blue" />
+            )}
+          </div>
+          <b>Estimate {moment(+openedTask?.estimate).fromNow()}</b>
+          <i>
+            Creator:
+            <Avatar
+              sx={{
+                backgroundColor: intToRGB(
+                  hashCode(
+                    (creator?.name + " " + creator?.surname).toLowerCase()
+                  )
+                ),
+              }}
+            >
+              {creator?.name[0]}
+              {creator?.surname[0]}
+            </Avatar>
+            {creator?.name} {creator?.surname}
+          </i>
+          {user.UserID === creator?.UserID && (
+            <Button
+              sx={{ position: "absolute", right: "20px", top: "90px" }}
+              color="error"
+              variant="outlined"
+              onClick={async () => {
+                const { success } = await postReq("deleteTask", {
+                  TaskID: openedTask?.TaskID,
+                });
+                if (success) {
+                  fetchData();
+                }
+                setOpen1(false);
+              }}
+            >
+              Delete Task
+            </Button>
+          )}
+          {isEditing ? (
+            <div className="edit">
+              <TextField
+                sx={{ margin: "0 !important" }}
+                label="Assignee"
+                variant="outlined"
+                className="modal__add-user--entry"
+                onChange={(e) => debounce(e.target.value)}
+              />
+              <FindUserResult
+                calculatedHeight={calculatedHeight}
+                selectedUser={selectedUser}
+                isSearchLoading={isSearchLoading}
+                searchResult={searchResult}
+                setSelectedUser={setSelectedUser}
+              />
+              <Button
+                variant="outlined"
+                onClick={async () => {
+                  if (selectedUser) {
+                    const { success } = await postReq("updateTask", {
+                      AssigneeID: selectedUser[0],
+                      TaskID: openedTask?.TaskID,
+                    });
+                    if (success) {
+                      const data = await postReq("getUserData", {
+                        AssigneeID: selectedUser[0],
+                        CreatorID: openedTask?.CreatorID,
+                      });
+                      setACdata(data);
+                    }
+                    setEditing(false);
+                  }
+                }}
+              >
+                Assign
+              </Button>
+            </div>
+          ) : (
+            <i>
+              Assagnie:
+              <Avatar
+                sx={{
+                  backgroundColor: intToRGB(
+                    hashCode(
+                      (assignee?.name + " " + assignee?.surname).toLowerCase()
+                    )
+                  ),
+                }}
+              >
+                {assignee?.name[0]}
+                {assignee?.surname[0]}
+              </Avatar>
+              {assignee?.name} {assignee?.surname}
+              <Button variant="outlined" onClick={() => setEditing(true)}>
+                Edit
+              </Button>
+            </i>
+          )}
+          <div className="modal__project--status">
+            Status:
+            <p>{openedTask?.status}</p>
+          </div>
+          <div dangerouslySetInnerHTML={{ __html: openedTask?.description }} />
         </div>
       </Modal>
     </>
