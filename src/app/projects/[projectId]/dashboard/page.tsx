@@ -26,6 +26,8 @@ import { MdKeyboardArrowUp, MdKeyboardArrowDown } from "react-icons/md";
 import { MdKeyboardDoubleArrowUp } from "react-icons/md";
 import moment from "moment";
 import { hashCode, intToRGB } from "@/components/Navigation";
+import { TaskComponent } from "@/components/Task";
+import { ExportExel } from "@/components/ExportExel";
 
 const modules = {
   toolbar: [
@@ -231,6 +233,7 @@ export default function Dashboard() {
         >
           Add Task +
         </Button>
+        <ExportExel what={"Tasks"} json={tasks}/>
         <div className="dashboard__wrapper">
           {statusArr.map((status) => {
             return (
@@ -246,40 +249,7 @@ export default function Dashboard() {
                 }}
               >
                 <h1>{status}</h1>
-                {tasks.map(
-                  (task) =>
-                    task.status.toLowerCase() === status.toLowerCase() && (
-                      <li
-                        key={task.TaskID}
-                        className="dashboard__tab--item"
-                        onClick={() => handleOpen1(task)}
-                        onDragStart={(e)=>{
-                          e.dataTransfer.setData("Text", task.TaskID);
-                        }}
-                        draggable={true}
-                      >
-                        <h3>{task.title}</h3>
-                        <div className="dashboard__tab--item-bage">
-                          {task.priority === "Low" && (
-                            <MdKeyboardArrowDown fill="orange" />
-                          )}
-                          {task.priority === "Medium" && (
-                            <MdKeyboardArrowUp fill="lightgreen" />
-                          )}
-                          {task.priority === "High" && (
-                            <MdKeyboardDoubleArrowUp fill="blue" />
-                          )}
-                        </div>
-                        <p>
-                          {task.description
-                            .replace(/(?:<(\/?))[\w\s"():,=;-]*(?:>)/gi, " ")
-                            .slice(0, 32)
-                            .trim() + "..."}
-                        </p>
-                        <i>Estimate {moment(+task.estimate).fromNow()}</i>
-                      </li>
-                    )
-                )}
+                {tasks.map((task) =><TaskComponent status={status} key={task.TaskID} handleOpen1={handleOpen1} task={task}/>)}
               </ul>
             );
           })}
@@ -287,7 +257,7 @@ export default function Dashboard() {
       </div>
       <Modal className="modal" open={open1} onClose={handleClose1}>
         <div className="modal__project">
-          <h1>{openedTask?.title}</h1>
+          <h1 style={{maxWidth:"70%",lineHeight:"36px"}}>{openedTask?.title}</h1>
           <div
             className="dashboard__tab--item-bage"
             style={{ top: "50px", right: "20px" }}
@@ -399,9 +369,24 @@ export default function Dashboard() {
           )}
           <div className="modal__project--status">
             Status:
-            <p>{openedTask?.status}</p>
+            <FormControl className="select" sx={{ minWidth: 120 }}>
+                <InputLabel sx={{ background: "rgb(20,20,20)" }}>
+                  Priotity
+                </InputLabel>
+                <Select defaultValue={openedTask?.status} onChange={async ({target})=>{
+                  const {success} = await postReq("updateTaskStatus",{TaskID:openedTask?.TaskID,status:target.value});
+                  if(success){
+                    fetchData();
+                  }
+                  }}>
+                  <MenuItem value={"To Do"}>To Do</MenuItem>
+                  <MenuItem value={"In Progress"}>In Progress</MenuItem>
+                  <MenuItem value={"Testing"}>Testing</MenuItem>
+                  <MenuItem value={"Done"}> Done</MenuItem>
+                </Select>
+              </FormControl>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: openedTask?.description }} />
+          <div style={{lineHeight:"20px",fontSize:"16px"}} dangerouslySetInnerHTML={{ __html: openedTask?.description }} />
         </div>
       </Modal>
     </>
