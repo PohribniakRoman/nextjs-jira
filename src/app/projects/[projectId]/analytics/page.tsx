@@ -5,8 +5,10 @@ import { Doughnut } from "react-chartjs-2";
 import { postReq } from "@/components/Menu";
 import { RootState } from "@/redux/store";
 import { useSelector } from "react-redux";
-import { statusArr } from "../dashboard/page";
 import { Task } from "@/storage/models/Tasks";
+
+
+const statusArr = ["To Do", "In Progress", "Testing", "Done"];
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
