@@ -59,7 +59,7 @@ const QuillWrapper = dynamic(
   }
 ) as typeof ReactQuill;
 
-const statusArr = ["To Do", "In Progress", "Testing", "Done"];
+export const statusArr = ["To Do", "In Progress", "Testing", "Done"];
 
 export default function Dashboard() {
   const [open, setOpen] = useState(false);
